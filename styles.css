@@ -1,0 +1,106 @@
+#tAccounts {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Equal spacing between the T-account columns */
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Equal spacing between the TGA and Commercial Bank A */
+}
+
+.t-account {
+    width: 200px; /* Uniform width for all T accounts */
+    height: 250px; /* Uniform height for all T accounts */
+    border: 1px solid black;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+}
+
+.column:last-child,
+.t-account:last-child {
+    margin-right: 0; /* No margin for the last item */
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    height: 500px; /* Adjust the height as needed */
+}
+
+.t-account {
+    width: 200px;
+    height: 250px;
+    border: 1px solid black;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+}
+
+.t-account-header {
+    padding: 5px;
+    background-color: #ddd;
+    text-align: center;
+    border-bottom: 1px solid black;
+}
+
+.t-account-body {
+    display: flex;
+    position: relative; /* Keeps the vertical dashed line in place */
+    flex-grow: 1;
+}
+
+.t-account-section {
+    flex: 1;
+    border-right: 1px dashed #000;
+}
+
+.t-account-section:last-child {
+    border-right: none;
+}
+
+#wordBank {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 10px;
+    background-color: #f4f4f4;
+    border: 2px dashed #ccc;
+    margin-top: 20px;
+}
+
+.draggable {
+    padding: 5px 10px;
+    margin: 5px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    cursor: move;
+    user-select: none;
+}
+
+#pageTitle {
+    text-align: center;
+    margin: 20px 0;
+}
+
+#clearButton {
+    display: block;
+    width: 100px;
+    padding: 10px;
+    margin: 20px auto; /* Centers the button horizontally */
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.highlight {
+    background-color: #8b8b8b; /* Change as desired */
+}
+
+.arrow-up, .arrow-down {
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 5px;
+    user-select: none;
+}

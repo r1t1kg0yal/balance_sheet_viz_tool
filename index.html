@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balance Sheet Operations Tool</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1 id="pageTitle">Balance Sheet Operations Tool</h1>
+    <div id="tAccounts">
+        <!-- Central Bank -->
+        <div class="t-account" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="t-account-header">Central Bank</div>
+            <div class="t-account-body">
+                <div class="t-account-section"></div>
+                <div class="t-account-section"></div>
+            </div>
+        </div>
+
+        <!-- TGA and Commercial Bank A in a column -->
+        <div class="column">
+            <!-- Treasury General Account -->
+            <div class="t-account" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="t-account-header">Treasury General Account</div>
+                <div class="t-account-body">
+                    <div class="t-account-section"></div>
+                    <div class="t-account-section"></div>
+                </div>
+            </div>
+            <!-- Commercial Bank A -->
+            <div class="t-account" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="t-account-header">Commercial Bank A</div>
+                <div class="t-account-body">
+                    <div class="t-account-section"></div>
+                    <div class="t-account-section"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Household A -->
+        <div class="t-account" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="t-account-header">Household A</div>
+            <div class="t-account-body">
+                <div class="t-account-section"></div>
+                <div class="t-account-section"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="wordBank" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <!-- Draggable items -->
+        <div class="draggable" draggable="true" id="bonds" data-value="100">Bonds</div>
+        <div class="draggable" draggable="true" id="bills" data-value="100">Bills</div>
+        <div class="draggable" draggable="true" id="reserves" data-value="100">Reserves</div>
+        <div class="draggable" draggable="true" id="deposits" data-value="100">Deposits</div>
+        <div class="draggable" draggable="true" id="repo" data-value="100">Repo</div>
+        <div class="draggable" draggable="true" id="loans" data-value="100">Loans</div>
+        <div class="draggable" draggable="true" id="nw" data-value="100">Net Worth</div>
+        <!-- More draggable items here -->
+    </div>
+    <button id="clearButton">Clear</button>
+    <script src="script.js"></script>
+</body>
+</html>
