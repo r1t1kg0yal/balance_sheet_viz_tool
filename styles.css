@@ -74,6 +74,15 @@
     cursor: pointer;
 }
 
+#validateButton {
+    display: block;
+    width: 100px;
+    padding: 10px;
+    margin: 20px auto; /* Centers the button horizontally */
+    font-size: 16px;
+    cursor: pointer;
+}
+
 .highlight {
     background-color: #8b8b8b; /* Change as desired */
 }
@@ -105,4 +114,23 @@
 .draggable {
     position: relative;
     /* other styles */
+}
+
+#notesSection {
+    margin-top: 20px;
+    padding: 10px;
+    /* Style as needed */
+}
+
+#notesSection h2 {
+    margin-bottom: 10px;
+}
+
+#notesSection ul {
+    padding-left: 20px;
+}
+
+#notesSection li {
+    margin-bottom: 5px;
+    line-height: 1.4;
 }

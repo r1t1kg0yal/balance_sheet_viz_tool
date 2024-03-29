@@ -236,3 +236,54 @@ function addDeleteButton(element) {
     element.appendChild(deleteBtn);
 }
 
+// Function to validate balance sheets
+function validateBalanceSheets() {
+    let totalNetWorth = 0;
+    let assets = {};
+    let issues = [];
+
+    // Calculate total net worth and tally assets
+    document.querySelectorAll('.t-account').forEach(tAccount => {
+        // Calculate net worth
+        let netWorthElement = tAccount.querySelector('[id^=nw_]');
+        let netWorthValue = parseInt(netWorthElement.getAttribute('data-value'), 10);
+        totalNetWorth += netWorthValue;
+        
+        // Tally assets on the left side
+        tAccount.querySelectorAll('.t-account-section:nth-child(1) .draggable:not([id^=nw_])').forEach(asset => {
+            let assetName = asset.textContent.split(':')[0].trim();
+            let assetValue = parseInt(asset.getAttribute('data-value'), 10);
+            assets[assetName] = (assets[assetName] || 0) + assetValue;
+        });
+        
+        // Tally assets on the right side as negative
+        tAccount.querySelectorAll('.t-account-section:nth-child(2) .draggable:not([id^=nw_])').forEach(asset => {
+            let assetName = asset.textContent.split(':')[0].trim();
+            let assetValue = parseInt(asset.getAttribute('data-value'), 10);
+            assets[assetName] = (assets[assetName] || 0) - assetValue;
+        });
+    });
+
+    // Check if total net worth is zero
+    if (totalNetWorth !== 0) {
+        issues.push(`Total net worth is off by ${totalNetWorth}.`);
+    }
+
+    // Check if assets balance out
+    for (let assetName in assets) {
+        if (assets[assetName] !== 0) {
+            issues.push(`Imbalance in ${assetName}: ${Math.abs(assets[assetName])} more on the ${assets[assetName] > 0 ? 'liabilities' : 'assets'} side.`);
+        }
+    }
+
+    // Provide visual feedback
+    if (issues.length === 0) {
+        alert("Balance sheets balance.");
+    } else {
+        alert("Issues found.\n" + issues.join('\n'));
+    }
+}
+
+// Event listener for the Validate button
+document.getElementById('validateButton').addEventListener('click', validateBalanceSheets);
+
