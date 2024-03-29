@@ -17,11 +17,15 @@ function drop(event) {
         clonedElement.textContent += `: ${value}`; // Add the ": 100" to the text
         clonedElement.id = draggableElement.id + "_clone" + (new Date()).getTime(); // Ensure a unique ID
         clonedElement.addEventListener('dragstart', drag);
-        // Append the cloned element instead of the original draggableElement
+
         if (event.target.className.includes("t-account-section")) {
-            event.target.appendChild(clonedElement);
+            // Prepend the cloned element instead of appending it to insert it at the top
+            event.target.prepend(clonedElement);
         }
     }
+
+    // After the drop, recalculate net worth for the affected T-account
+    calculateNetWorth(event.target.closest('.t-account'));
 }
 
 // One 'DOMContentLoaded' to rule them all
@@ -32,15 +36,29 @@ document.addEventListener('DOMContentLoaded', (event) => {
         draggable.addEventListener('dragstart', drag);
     });
 
+    // Adjust the clear button functionality
     document.getElementById('clearButton').addEventListener('click', function() {
-        document.querySelectorAll('.t-account-section').forEach(section => {
-            Array.from(section.childNodes).forEach(child => {
-                if (child.classList && child.classList.contains('draggable')) {
-                    section.removeChild(child);
+        document.querySelectorAll('.t-account').forEach(tAccount => {
+            // Select the right section of each T-account
+            let rightSection = tAccount.querySelector('.t-account-section:nth-child(2)');
+            Array.from(rightSection.childNodes).forEach(child => {
+                // Remove all elements except the net worth bubble
+                if (child.classList && child.classList.contains('draggable') && !child.id.startsWith('nw_')) {
+                    rightSection.removeChild(child);
                 }
             });
+    
+            // Select the left section of each T-account
+            let leftSection = tAccount.querySelector('.t-account-section:nth-child(1)');
+            // Remove all elements from the left section
+            while (leftSection.firstChild) {
+                leftSection.removeChild(leftSection.firstChild);
+            }
+    
+            // After clearing, recalculate net worth for each T-account
+            calculateNetWorth(tAccount);
         });
-    });
+    }); 
 
     // Click and delete functionality
     let selectedElement = null;
@@ -58,10 +76,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     });
 
+    // Recalculate net worth after deleting an element
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Delete' || e.key === 'Backspace' && selectedElement) {
+        if ((e.key === 'Delete' || e.key === 'Backspace') && selectedElement) {
+            let tAccount = selectedElement.closest('.t-account');
             selectedElement.remove();
             selectedElement = null;
+
+            // After deletion, recalculate net worth
+            calculateNetWorth(tAccount);
         }
     });
 
@@ -74,10 +97,36 @@ document.addEventListener('DOMContentLoaded', (event) => {
             });
         }
     });
+
+    // Function to create a net worth bubble
+    function createNetWorthBubble() {
+        var netWorthBubble = document.createElement('div');
+        netWorthBubble.classList.add('draggable');
+        netWorthBubble.textContent = 'Net Worth: 0';
+        netWorthBubble.id = 'nw_' + (new Date()).getTime(); // Ensure a unique ID
+        netWorthBubble.setAttribute('draggable', true);
+        netWorthBubble.setAttribute('data-value', '0');
+        netWorthBubble.addEventListener('dragstart', drag);
+        // Set the font weight to bold
+        netWorthBubble.style.fontWeight = 'bold';
+        return netWorthBubble;
+    }    
+
+    // Populate Net Worth bubble in each T account section on the right side
+    let tAccountSections = document.querySelectorAll('.t-account-body .t-account-section:nth-child(2)');
+    tAccountSections.forEach(section => {
+        let netWorthBubble = createNetWorthBubble();
+        section.appendChild(netWorthBubble);
+    });
     
 });
 
 function showArrows(element) {
+    // If the element is a net worth bubble, don't show arrows
+    if (element.id.startsWith('nw_')) {
+        return;
+    }
+
     // Check if the arrows already exist to avoid creating duplicates
     if (!element.querySelector('.arrow-up')) {
         // Create up arrow
@@ -98,11 +147,15 @@ function showArrows(element) {
     }
 }
 
+
 function adjustValue(element, amount) {
     var value = parseInt(element.getAttribute('data-value'), 10);
     value += amount;
     element.setAttribute('data-value', value.toString());
     element.textContent = `${element.textContent.split(':')[0]}: ${value}`;
+
+    // After adjustment, recalculate net worth for the affected T-account
+    calculateNetWorth(element.closest('.t-account'));
 }
 
 function removeArrows(element) {
@@ -113,5 +166,26 @@ function removeArrows(element) {
     }
     if (downArrow) {
         downArrow.remove();
+    }
+}
+
+function calculateNetWorth(tAccount) {
+    let leftSideSum = 0, rightSideSum = 0;
+    let leftItems = tAccount.querySelectorAll('.t-account-section:nth-child(1) .draggable');
+    let rightItems = tAccount.querySelectorAll('.t-account-section:nth-child(2) .draggable:not([id^=nw_])');
+
+    leftItems.forEach(item => {
+        leftSideSum += parseInt(item.getAttribute('data-value'), 10);
+    });
+
+    rightItems.forEach(item => {
+        rightSideSum += parseInt(item.getAttribute('data-value'), 10);
+    });
+
+    let netWorth = leftSideSum - rightSideSum;
+    let netWorthElement = tAccount.querySelector('.t-account-section:nth-child(2) [id^=nw_]');
+    if (netWorthElement) {
+        netWorthElement.textContent = `Net Worth: ${netWorth}`;
+        netWorthElement.setAttribute('data-value', netWorth.toString());
     }
 }
