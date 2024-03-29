@@ -8,46 +8,7 @@
 </head>
 <body>
     <h1 id="pageTitle">Balance Sheet Operations Tool</h1>
-    <div id="tAccounts">
-        <!-- Central Bank -->
-        <div class="t-account" ondrop="drop(event)" ondragover="allowDrop(event)">
-            <div class="t-account-header">Central Bank</div>
-            <div class="t-account-body">
-                <div class="t-account-section"></div>
-                <div class="t-account-section"></div>
-            </div>
-        </div>
-
-        <!-- TGA and Commercial Bank A in a column -->
-        <div class="column">
-            <!-- Treasury General Account -->
-            <div class="t-account" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <div class="t-account-header">Treasury General Account</div>
-                <div class="t-account-body">
-                    <div class="t-account-section"></div>
-                    <div class="t-account-section"></div>
-                </div>
-            </div>
-            <!-- Commercial Bank A -->
-            <div class="t-account" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <div class="t-account-header">Commercial Bank A</div>
-                <div class="t-account-body">
-                    <div class="t-account-section"></div>
-                    <div class="t-account-section"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Household A -->
-        <div class="t-account" ondrop="drop(event)" ondragover="allowDrop(event)">
-            <div class="t-account-header">Household A</div>
-            <div class="t-account-body">
-                <div class="t-account-section"></div>
-                <div class="t-account-section"></div>
-            </div>
-        </div>
-    </div>
-
+    
     <div id="wordBank" ondrop="drop(event)" ondragover="allowDrop(event)">
         <!-- Draggable items -->
         <div class="draggable" draggable="true" id="bonds" data-value="100">Bonds</div>
@@ -58,6 +19,66 @@
         <div class="draggable" draggable="true" id="loans" data-value="100">Loans</div>
         <!-- More draggable items here -->
     </div>
+    
+    <div id="tAccounts">
+        <!-- Central Bank -->
+        <div class="t-account" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="t-account-header" onclick="editTitle(this)">Central Bank</div>
+            <div class="t-account-body">
+                <div class="t-account-section"></div>
+                <div class="t-account-section"></div>
+            </div>
+        </div>
+
+        <!-- TGA and Commercial Bank A in a column -->
+        <div class="column">
+            <!-- Treasury General Account -->
+            <div class="t-account" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="t-account-header" onclick="editTitle(this)">Treasury General Account</div>
+                <div class="t-account-body">
+                    <div class="t-account-section"></div>
+                    <div class="t-account-section"></div>
+                </div>
+            </div>
+            <!-- Commercial Bank A -->
+            <div class="t-account" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="t-account-header" onclick="editTitle(this)">Commercial Bank A</div>
+                <div class="t-account-body">
+                    <div class="t-account-section"></div>
+                    <div class="t-account-section"></div>
+                </div>
+            </div>
+            <!-- Commercial Bank A -->
+            <div class="t-account" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="t-account-header" onclick="editTitle(this)">Commercial Bank B</div>
+                <div class="t-account-body">
+                    <div class="t-account-section"></div>
+                    <div class="t-account-section"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Household A -->
+        <div class="column">
+            <!-- Household A -->
+            <div class="t-account" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="t-account-header" onclick="editTitle(this)">Household A</div>
+                <div class="t-account-body">
+                    <div class="t-account-section"></div>
+                    <div class="t-account-section"></div>
+                </div>
+            </div>
+            <!-- Household B -->
+            <div class="t-account" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="t-account-header" onclick="editTitle(this)">Household B</div>
+                <div class="t-account-body">
+                    <div class="t-account-section"></div>
+                    <div class="t-account-section"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <button id="clearButton">Clear</button>
     <script src="script.js"></script>
 </body>

@@ -24,6 +24,11 @@ function drop(event) {
         }
     }
 
+    if (event.target.className.includes("t-account-section")) {
+        event.target.prepend(clonedElement);
+        addDeleteButton(clonedElement);  // Add this line
+    }    
+
     // After the drop, recalculate net worth for the affected T-account
     calculateNetWorth(event.target.closest('.t-account'));
 }
@@ -147,16 +152,26 @@ function showArrows(element) {
     }
 }
 
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 function adjustValue(element, amount) {
-    var value = parseInt(element.getAttribute('data-value'), 10);
-    value += amount;
-    element.setAttribute('data-value', value.toString());
-    element.textContent = `${element.textContent.split(':')[0]}: ${value}`;
+    var currentValue = parseInt(element.getAttribute('data-value'), 10);
+    var newValue = currentValue + amount;
+    element.setAttribute('data-value', newValue.toString());
 
-    // After adjustment, recalculate net worth for the affected T-account
+    // Extract the name, capitalize the first letter, and update the text
+    var name = element.id.split('_')[0];
+    var capitalized = capitalizeFirstLetter(name);
+    var textNode = element.childNodes[0]; // Assuming the text node is the first child
+    textNode.nodeValue = `${capitalized}: ${newValue}`;
+
+    // Recalculate net worth if necessary
     calculateNetWorth(element.closest('.t-account'));
 }
+
+
 
 function removeArrows(element) {
     const upArrow = element.querySelector('.arrow-up');
@@ -189,3 +204,35 @@ function calculateNetWorth(tAccount) {
         netWorthElement.setAttribute('data-value', netWorth.toString());
     }
 }
+
+function editTitle(headerElement) {
+    headerElement.setAttribute('contenteditable', 'true');
+    headerElement.focus();
+
+    // Handle when the user clicks away (blur event)
+    headerElement.onblur = function() {
+        headerElement.setAttribute('contenteditable', 'false');
+        // Here you can also add logic to handle the updated title, like saving it
+        // For example, if you want to update something in the backend or localStorage
+    };
+}
+
+function deleteElement(element) {
+    // Store a reference to the parent T account before removing the element
+    let tAccount = element.closest('.t-account');
+    
+    // Remove the element
+    element.remove();
+
+    // Recalculate net worth for the T account
+    calculateNetWorth(tAccount);
+}
+
+function addDeleteButton(element) {
+    var deleteBtn = document.createElement('span');
+    deleteBtn.textContent = 'x';
+    deleteBtn.classList.add('delete-btn');
+    deleteBtn.onclick = function() { deleteElement(element); };
+    element.appendChild(deleteBtn);
+}
+
