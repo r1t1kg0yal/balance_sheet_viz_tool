@@ -272,7 +272,7 @@ function validateBalanceSheets() {
     // Check if assets balance out
     for (let assetName in assets) {
         if (assets[assetName] !== 0) {
-            issues.push(`Imbalance in ${assetName}: ${Math.abs(assets[assetName])} more on the ${assets[assetName] > 0 ? 'liabilities' : 'assets'} side.`);
+            issues.push(`Imbalance in ${assetName}: ${Math.abs(assets[assetName])} more on the ${assets[assetName] > 0 ? 'assets' : 'liabilities'} side.`);
         }
     }
 
