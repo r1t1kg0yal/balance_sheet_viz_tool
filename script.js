@@ -240,6 +240,7 @@ function addDeleteButton(element) {
 function validateBalanceSheets() {
     let totalNetWorth = 0;
     let assets = {};
+    let totalHouseValue = 0; // Total value of House items
     let issues = [];
 
     // Calculate total net worth and tally assets
@@ -248,28 +249,36 @@ function validateBalanceSheets() {
         let netWorthElement = tAccount.querySelector('[id^=nw_]');
         let netWorthValue = parseInt(netWorthElement.getAttribute('data-value'), 10);
         totalNetWorth += netWorthValue;
-        
-        // Tally assets on the left side
+
+        // Tally assets and liabilities, excluding House
         tAccount.querySelectorAll('.t-account-section:nth-child(1) .draggable:not([id^=nw_])').forEach(asset => {
             let assetName = asset.textContent.split(':')[0].trim();
             let assetValue = parseInt(asset.getAttribute('data-value'), 10);
-            assets[assetName] = (assets[assetName] || 0) + assetValue;
+            if (assetName !== "House") {
+                assets[assetName] = (assets[assetName] || 0) + assetValue;
+            } else {
+                totalHouseValue += assetValue; // Add to total House value
+            }
         });
-        
-        // Tally assets on the right side as negative
+
         tAccount.querySelectorAll('.t-account-section:nth-child(2) .draggable:not([id^=nw_])').forEach(asset => {
             let assetName = asset.textContent.split(':')[0].trim();
             let assetValue = parseInt(asset.getAttribute('data-value'), 10);
-            assets[assetName] = (assets[assetName] || 0) - assetValue;
+            if (assetName !== "House") {
+                assets[assetName] = (assets[assetName] || 0) - assetValue;
+            }
         });
     });
 
-    // Check if total net worth is zero
+    // Subtract House value from total net worth for the final check
+    totalNetWorth -= totalHouseValue;
+
+    // Check if total net worth (excluding House) is zero
     if (totalNetWorth !== 0) {
         issues.push(`Total net worth is off by ${totalNetWorth}.`);
     }
 
-    // Check if assets balance out
+    // Check if assets (excluding House) balance out
     for (let assetName in assets) {
         if (assets[assetName] !== 0) {
             issues.push(`Imbalance in ${assetName}: ${Math.abs(assets[assetName])} more on the ${assets[assetName] > 0 ? 'assets' : 'liabilities'} side.`);
@@ -283,6 +292,7 @@ function validateBalanceSheets() {
         alert("Issues found.\n" + issues.join('\n'));
     }
 }
+
 
 // Event listener for the Validate button
 document.getElementById('validateButton').addEventListener('click', validateBalanceSheets);
