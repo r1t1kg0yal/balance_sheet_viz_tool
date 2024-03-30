@@ -11,6 +11,12 @@ function drop(event) {
     var data = event.dataTransfer.getData("text/plain");
     var draggableElement = document.getElementById(data);
 
+    // Check if the dropped item is 'Land' and the target is the right side (liability side)
+    if (draggableElement.id === "land" && event.target.classList.contains('t-account-section') && event.target.nextElementSibling === null) {
+        alert("Land cannot be a liability.");
+        return; // Prevent dropping 'Land' on the right side
+    }
+
     if (draggableElement.parentNode.id === "wordBank") {
         var clonedElement = draggableElement.cloneNode(true);
         var value = 100; // Set the default value to 100
@@ -32,6 +38,7 @@ function drop(event) {
     // After the drop, recalculate net worth for the affected T-account
     calculateNetWorth(event.target.closest('.t-account'));
 }
+
 
 // One 'DOMContentLoaded' to rule them all
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -240,7 +247,7 @@ function addDeleteButton(element) {
 function validateBalanceSheets() {
     let totalNetWorth = 0;
     let assets = {};
-    let totalHouseValue = 0; // Total value of House items
+    let totalLandValue = 0; // Total value of Land items
     let issues = [];
 
     // Calculate total net worth and tally assets
@@ -250,35 +257,35 @@ function validateBalanceSheets() {
         let netWorthValue = parseInt(netWorthElement.getAttribute('data-value'), 10);
         totalNetWorth += netWorthValue;
 
-        // Tally assets and liabilities, excluding House
+        // Tally assets and liabilities, excluding Land
         tAccount.querySelectorAll('.t-account-section:nth-child(1) .draggable:not([id^=nw_])').forEach(asset => {
             let assetName = asset.textContent.split(':')[0].trim();
             let assetValue = parseInt(asset.getAttribute('data-value'), 10);
-            if (assetName !== "House") {
+            if (assetName !== "Land") {
                 assets[assetName] = (assets[assetName] || 0) + assetValue;
             } else {
-                totalHouseValue += assetValue; // Add to total House value
+                totalLandValue += assetValue; // Add to total Land value
             }
         });
 
         tAccount.querySelectorAll('.t-account-section:nth-child(2) .draggable:not([id^=nw_])').forEach(asset => {
             let assetName = asset.textContent.split(':')[0].trim();
             let assetValue = parseInt(asset.getAttribute('data-value'), 10);
-            if (assetName !== "House") {
+            if (assetName !== "Land") {
                 assets[assetName] = (assets[assetName] || 0) - assetValue;
             }
         });
     });
 
-    // Subtract House value from total net worth for the final check
-    totalNetWorth -= totalHouseValue;
+    // Subtract Land value from total net worth for the final check
+    totalNetWorth -= totalLandValue;
 
-    // Check if total net worth (excluding House) is zero
+    // Check if total net worth (excluding Land) is zero
     if (totalNetWorth !== 0) {
         issues.push(`Total net worth is off by ${totalNetWorth}.`);
     }
 
-    // Check if assets (excluding House) balance out
+    // Check if assets (excluding Land) balance out
     for (let assetName in assets) {
         if (assets[assetName] !== 0) {
             issues.push(`Imbalance in ${assetName}: ${Math.abs(assets[assetName])} more on the ${assets[assetName] > 0 ? 'assets' : 'liabilities'} side.`);
