@@ -11,35 +11,34 @@ function drop(event) {
     var data = event.dataTransfer.getData("text/plain");
     var draggableElement = document.getElementById(data);
 
-    // Check if the dropped item is 'Land' and the target is the right side (liability side)
-    if (draggableElement.id === "land" && event.target.classList.contains('t-account-section') && event.target.nextElementSibling === null) {
-        alert("Land cannot be a liability.");
-        return; // Prevent dropping 'Land' on the right side
-    }
+    // Target T-account section
+    var targetSection = event.target.classList.contains('t-account-section') ?
+                        event.target : event.target.closest('.t-account-section');
 
-    if (draggableElement.parentNode.id === "wordBank") {
+    // If dropping from the word bank, check if the same type of asset already exists in the target section
+    if (draggableElement.parentNode.id === "wordBank" && targetSection) {
+        var assetType = draggableElement.id; // 'id' of the asset in the word bank
+        var existingAsset = [...targetSection.getElementsByClassName('draggable')].find(el => el.id.includes(assetType));
+
+        if (existingAsset) {
+            alert(`${capitalizeFirstLetter(assetType)} is already present in that T Account.`);
+            return;
+        }
+
+        // Create and append the cloned element
         var clonedElement = draggableElement.cloneNode(true);
         var value = 0; // Set the default value to 0
-        clonedElement.textContent += `: ${value}`; // Add the ": 0" to the text
-        clonedElement.id = draggableElement.id + "_clone" + (new Date()).getTime(); // Ensure a unique ID
-        clonedElement.addEventListener('dragstart', drag);
-    
-        // Update the data-value attribute to 0
+        clonedElement.textContent += `: ${value}`;
+        clonedElement.id = assetType + "_clone" + (new Date()).getTime(); // Ensure a unique ID
         clonedElement.setAttribute('data-value', value);    
+        clonedElement.addEventListener('dragstart', drag);
 
-        if (event.target.className.includes("t-account-section")) {
-            // Prepend the cloned element instead of appending it to insert it at the top
-            event.target.prepend(clonedElement);
-        }
+        targetSection.prepend(clonedElement);
+        addDeleteButton(clonedElement); 
+
+        // Recalculate net worth
+        calculateNetWorth(targetSection.closest('.t-account'));
     }
-
-    if (event.target.className.includes("t-account-section")) {
-        event.target.prepend(clonedElement);
-        addDeleteButton(clonedElement);  // Add this line
-    }    
-
-    // After the drop, recalculate net worth for the affected T-account
-    calculateNetWorth(event.target.closest('.t-account'));
 }
 
 // One 'DOMContentLoaded' to rule them all
