@@ -19,10 +19,13 @@ function drop(event) {
 
     if (draggableElement.parentNode.id === "wordBank") {
         var clonedElement = draggableElement.cloneNode(true);
-        var value = 100; // Set the default value to 100
-        clonedElement.textContent += `: ${value}`; // Add the ": 100" to the text
+        var value = 0; // Set the default value to 0
+        clonedElement.textContent += `: ${value}`; // Add the ": 0" to the text
         clonedElement.id = draggableElement.id + "_clone" + (new Date()).getTime(); // Ensure a unique ID
         clonedElement.addEventListener('dragstart', drag);
+    
+        // Update the data-value attribute to 0
+        clonedElement.setAttribute('data-value', value);    
 
         if (event.target.className.includes("t-account-section")) {
             // Prepend the cloned element instead of appending it to insert it at the top
@@ -38,7 +41,6 @@ function drop(event) {
     // After the drop, recalculate net worth for the affected T-account
     calculateNetWorth(event.target.closest('.t-account'));
 }
-
 
 // One 'DOMContentLoaded' to rule them all
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -166,17 +168,24 @@ function capitalizeFirstLetter(string) {
 function adjustValue(element, amount) {
     var currentValue = parseInt(element.getAttribute('data-value'), 10);
     var newValue = currentValue + amount;
-    var assetName = element.id.split('_')[0]; // Get the name of the asset
+    var assetName = element.id.split('_')[0];
     var capitalizedAssetName = capitalizeFirstLetter(assetName);
 
-    // Determine color based on the amount (up or down arrow)
     var color = amount > 0 ? 'green' : 'red';
-    var displayText = `${capitalizedAssetName}: <span style='color: ${color};'>${currentValue} -> ${newValue}</span>`;
+    var displayText = `<span style='color: ${color};'>${currentValue} -> ${newValue}</span>`;
 
-    element.innerHTML = displayText; // Update the element's HTML
-    element.setAttribute('data-value', newValue.toString()); // Update the data-value attribute
+    // Find the existing span for the value display
+    var valueDisplaySpan = element.querySelector('.value-display');
+    if (valueDisplaySpan) {
+        // Update the value display text
+        valueDisplaySpan.innerHTML = `${capitalizedAssetName}: ${displayText}`;
+    } else {
+        // If the span doesn't exist, recreate the inner HTML
+        element.innerHTML = `<span class="value-display">${capitalizedAssetName}: ${displayText}</span>`;
+        addDeleteButton(element);
+    }
 
-    // Recalculate net worth if necessary
+    element.setAttribute('data-value', newValue.toString());
     calculateNetWorth(element.closest('.t-account'));
 }
 
