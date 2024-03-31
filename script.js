@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         netWorthBubble.classList.add('draggable');
         netWorthBubble.textContent = 'Net Worth: 0';
         netWorthBubble.id = 'nw_' + (new Date()).getTime(); // Ensure a unique ID
-        netWorthBubble.setAttribute('draggable', true);
+        netWorthBubble.removeAttribute('draggable', true);
         netWorthBubble.setAttribute('data-value', '0');
         netWorthBubble.addEventListener('dragstart', drag);
         // Set the font weight to bold
@@ -166,19 +166,19 @@ function capitalizeFirstLetter(string) {
 function adjustValue(element, amount) {
     var currentValue = parseInt(element.getAttribute('data-value'), 10);
     var newValue = currentValue + amount;
-    element.setAttribute('data-value', newValue.toString());
+    var assetName = element.id.split('_')[0]; // Get the name of the asset
+    var capitalizedAssetName = capitalizeFirstLetter(assetName);
 
-    // Extract the name, capitalize the first letter, and update the text
-    var name = element.id.split('_')[0];
-    var capitalized = capitalizeFirstLetter(name);
-    var textNode = element.childNodes[0]; // Assuming the text node is the first child
-    textNode.nodeValue = `${capitalized}: ${newValue}`;
+    // Determine color based on the amount (up or down arrow)
+    var color = amount > 0 ? 'green' : 'red';
+    var displayText = `${capitalizedAssetName}: <span style='color: ${color};'>${currentValue} -> ${newValue}</span>`;
+
+    element.innerHTML = displayText; // Update the element's HTML
+    element.setAttribute('data-value', newValue.toString()); // Update the data-value attribute
 
     // Recalculate net worth if necessary
     calculateNetWorth(element.closest('.t-account'));
 }
-
-
 
 function removeArrows(element) {
     const upArrow = element.querySelector('.arrow-up');
@@ -304,3 +304,22 @@ function validateBalanceSheets() {
 // Event listener for the Validate button
 document.getElementById('validateButton').addEventListener('click', validateBalanceSheets);
 
+// Event listener for the Reset Display button
+document.getElementById('resetDisplayButton').addEventListener('click', resetDisplay);
+
+function resetDisplay() {
+    let tAccountSections = document.querySelectorAll('.t-account .t-account-section');
+
+    tAccountSections.forEach(section => {
+        section.querySelectorAll('.draggable').forEach(draggable => {
+            // Ensure this is a cloned draggable element (from the word bank)
+            if (draggable.id.includes('_clone')) {
+                var assetName = draggable.id.split('_')[0]; // Get the name of the asset from the cloned ID
+                var capitalizedAssetName = capitalizeFirstLetter(assetName);
+                var currentValue = parseInt(draggable.getAttribute('data-value'), 10);
+
+                draggable.innerHTML = `${capitalizedAssetName}: ${currentValue}`; // Reset the text display
+            }
+        });
+    });
+}
