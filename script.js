@@ -131,6 +131,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
         let netWorthBubble = createNetWorthBubble();
         section.appendChild(netWorthBubble);
     });
+
+    // Event listener for layout change
+    document.getElementById('layoutDropdown').addEventListener('change', function() {
+        adjustLayout(this.value);
+    });
+
+    // Adjust layout based on the default selection
+    adjustLayout(document.getElementById('layoutDropdown').value);
     
 });
 
@@ -331,3 +339,4 @@ function resetDisplay() {
         });
     });
 }
+
