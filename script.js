@@ -11,12 +11,43 @@ function drop(event) {
     var data = event.dataTransfer.getData("text/plain");
     var draggableElement = document.getElementById(data);
 
+    // Check if the dragged asset has a value of 0
+    var assetValue = parseInt(draggableElement.getAttribute('data-value'), 10);
+    if (assetValue === 0) {
+        return; // Exit if the asset's value is 0
+    }
+    
     // Target T-account section
     var targetSection = event.target.classList.contains('t-account-section') ?
                         event.target : event.target.closest('.t-account-section');
 
-    // If dropping from the word bank, check if the same type of asset already exists in the target section
-    if (draggableElement.parentNode.id === "wordBank" && targetSection) {
+    if (!targetSection) {
+        return; // Exit if no target section is found
+    }
+
+    // Check if dragged from another T-account (not from word bank)
+    if (draggableElement.parentNode.classList.contains('t-account-section')) {
+        // Source T-account
+        var sourceSection = draggableElement.parentNode;
+        var sourceTAccount = sourceSection.closest('.t-account');
+
+        // Target T-account
+        var targetTAccount = targetSection.closest('.t-account');
+
+        // Check if the source and target T-accounts are the same, and the sections are the same
+        if (sourceTAccount === targetTAccount && sourceSection === targetSection) {
+            return; // Exit if the asset is dropped in the same section of the same T-account
+        }
+
+        // Adjust values and update display
+        adjustValueForDrag(draggableElement, -100); // Decrement from source
+        adjustValueForDrag(draggableElement, 100, targetSection); // Increment in target
+
+        // Recalculate net worth for both T accounts
+        calculateNetWorth(sourceTAccount);
+        calculateNetWorth(targetTAccount);
+    } else {
+        // If dragging from the word bank
         var assetType = draggableElement.id; // 'id' of the asset in the word bank
         var existingAsset = [...targetSection.getElementsByClassName('draggable')].find(el => el.id.includes(assetType));
 
@@ -27,7 +58,7 @@ function drop(event) {
 
         // Create and append the cloned element
         var clonedElement = draggableElement.cloneNode(true);
-        var value = 0; // Set the default value to 0
+        var value = 100; // Set the initial value
         clonedElement.textContent += `: ${value}`;
         clonedElement.id = assetType + "_clone" + (new Date()).getTime(); // Ensure a unique ID
         clonedElement.setAttribute('data-value', value);    
@@ -38,6 +69,43 @@ function drop(event) {
 
         // Recalculate net worth
         calculateNetWorth(targetSection.closest('.t-account'));
+    }
+}
+
+function adjustValueForDrag(element, amount, targetSection) {
+    var assetName = element.id.split('_')[0];
+    var currentValue = parseInt(element.getAttribute('data-value'), 10);
+    var newValue = currentValue + amount;
+
+    // Function to create display text with color coding
+    function createDisplayText(oldValue, newValue) {
+        var color = newValue > oldValue ? 'green' : 'red';
+        return `<span style='color: ${color};'>${oldValue} -> ${newValue}</span>`;
+    }
+
+    if (amount < 0) {
+        // Decrement from source
+        element.innerHTML = `${capitalizeFirstLetter(assetName)}: ` + createDisplayText(currentValue, newValue);
+        element.setAttribute('data-value', newValue.toString());
+    } else {
+        // Increment in target
+        var existingAssetInTarget = [...targetSection.getElementsByClassName('draggable')].find(el => el.id.includes(assetName));
+        var targetNewValue = existingAssetInTarget ? parseInt(existingAssetInTarget.getAttribute('data-value'), 10) + 100 : 100;
+
+        if (existingAssetInTarget) {
+            // Update existing asset in the target
+            existingAssetInTarget.innerHTML = `${capitalizeFirstLetter(assetName)}: ` + createDisplayText(targetNewValue - 100, targetNewValue);
+            existingAssetInTarget.setAttribute('data-value', targetNewValue.toString());
+        } else {
+            // Create new asset in the target with value 100
+            var clonedElement = element.cloneNode(true);
+            clonedElement.innerHTML = `${capitalizeFirstLetter(assetName)}: ` + createDisplayText(0, 100);
+            clonedElement.id = assetName + "_clone" + (new Date()).getTime(); // Ensure a unique ID
+            clonedElement.setAttribute('data-value', '100');
+            clonedElement.addEventListener('dragstart', drag);
+            addDeleteButton(clonedElement); 
+            targetSection.prepend(clonedElement);
+        }
     }
 }
 
