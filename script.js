@@ -50,26 +50,26 @@ function drop(event) {
         // If dragging from the word bank
         var assetType = draggableElement.id; // 'id' of the asset in the word bank
         var existingAsset = [...targetSection.getElementsByClassName('draggable')].find(el => el.id.includes(assetType));
-
+    
         if (existingAsset) {
             alert(`${capitalizeFirstLetter(assetType)} is already present in that T Account.`);
             return;
         }
-
-        // Create and append the cloned element
+    
+        // Create and append the cloned element with a default value of 0
         var clonedElement = draggableElement.cloneNode(true);
-        var value = 100; // Set the initial value
+        var value = 0; // Set the initial value to 0
         clonedElement.textContent += `: ${value}`;
         clonedElement.id = assetType + "_clone" + (new Date()).getTime(); // Ensure a unique ID
         clonedElement.setAttribute('data-value', value);    
         clonedElement.addEventListener('dragstart', drag);
-
+    
         targetSection.prepend(clonedElement);
         addDeleteButton(clonedElement); 
-
+    
         // Recalculate net worth
         calculateNetWorth(targetSection.closest('.t-account'));
-    }
+    }    
 }
 
 function adjustValueForDrag(element, amount, targetSection) {
