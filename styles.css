@@ -106,8 +106,8 @@
 .delete-btn {
     display: none;
     position: absolute;
-    top: 0;
-    right: 0;
+    top: -4px;
+    right: -2px;
     cursor: pointer;
     color: black; /* Black color for the 'x' */
     font-size: 15px; /* Increased font size for better visibility */
