@@ -141,6 +141,24 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     }); 
 
+    // Create delete buttons for specific T Accounts
+    const tAccountsToDelete = ['Commercial Bank A', 'Non-Bank B', 'Commercial Bank B'];
+    tAccountsToDelete.forEach(tAccountName => {
+        let tAccounts = document.querySelectorAll('.t-account-header');
+        tAccounts.forEach(header => {
+            if (header.textContent.includes(tAccountName)) {
+                addTAccountDeleteButton(header.parentNode);
+            }
+        });
+    });
+
+    // Event delegation for delete action
+    document.addEventListener('click', function(event) {
+        if (event.target.classList.contains('t-account-delete-btn')) {
+            event.target.closest('.t-account').remove(); // Remove the closest T Account parent
+        }
+    });
+    
     // Click and delete functionality
     let selectedElement = null;
 
@@ -199,14 +217,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         let netWorthBubble = createNetWorthBubble();
         section.appendChild(netWorthBubble);
     });
-
-    // Event listener for layout change
-    document.getElementById('layoutDropdown').addEventListener('change', function() {
-        adjustLayout(this.value);
-    });
-
-    // Adjust layout based on the default selection
-    adjustLayout(document.getElementById('layoutDropdown').value);
     
 });
 
@@ -408,3 +418,10 @@ function resetDisplay() {
     });
 }
 
+// Function to create a delete button for specified T Accounts
+function addTAccountDeleteButton(tAccount) {
+    var deleteBtn = document.createElement('span');
+    deleteBtn.textContent = '×'; // Multiplication sign
+    deleteBtn.classList.add('t-account-delete-btn');
+    tAccount.querySelector('.t-account-header').appendChild(deleteBtn); // Append to the header
+}

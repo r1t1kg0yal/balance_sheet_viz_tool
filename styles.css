@@ -11,6 +11,7 @@
 }
 
 .t-account {
+    position: relative;
     width: 400px; /* Uniform width for all T accounts */
     height: 250px; /* Uniform height for all T accounts */
     border: 1px solid black;
@@ -145,3 +146,20 @@
     line-height: 1.4;
 }
 
+.t-account-delete-btn {
+    display: none; /* Hidden by default, will be shown on hover */
+    position: absolute;
+    top: -14px; /* Half the height to move it up outside the T Account */
+    right: -5.5px; /* Half the width to move it right outside the T Account */
+    cursor: pointer;
+    color: black; /* Changed to black as requested */
+    font-size: 20px; /* Adjusted for better centering */
+    line-height: 25px; /* Ensures the 'x' is vertically centered */
+    text-align: center; /* Ensures the 'x' is horizontally centered */
+    background-color: rgba(255, 255, 255, 0); /* Circle background color */
+    box-sizing: border-box; /* Include padding and border in the width and height */
+}
+
+.t-account:hover .t-account-delete-btn {
+    display: block;
+}
