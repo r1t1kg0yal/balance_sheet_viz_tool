@@ -109,10 +109,11 @@
     top: 0;
     right: 0;
     cursor: pointer;
-    color: white;
-    background-color: red;
-    border-radius: 0%;
-    padding: 1px 1px;
+    color: black; /* Black color for the 'x' */
+    font-size: 15px; /* Increased font size for better visibility */
+    content: "\00D7"; /* Using the multiplication symbol */
+    padding: 2px 4px; /* Adjust padding as needed */
+    border-radius: 50%; /* Rounded corners */
 }
 
 /* Show the delete button when hovering over its parent */

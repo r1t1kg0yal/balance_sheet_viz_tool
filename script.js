@@ -321,7 +321,7 @@ function deleteElement(element) {
 
 function addDeleteButton(element) {
     var deleteBtn = document.createElement('span');
-    deleteBtn.textContent = 'x';
+    deleteBtn.textContent = '\u00D7'; // Unicode character for the multiplication symbol
     deleteBtn.classList.add('delete-btn');
     deleteBtn.onclick = function() { deleteElement(element); };
     element.appendChild(deleteBtn);
